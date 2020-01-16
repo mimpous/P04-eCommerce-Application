@@ -39,13 +39,7 @@ public class UserController {
 	public ResponseEntity<User> findById(@PathVariable Long id) {
 		return ResponseEntity.of(userRepository.findById(id));
 	}
-	
-
-	@GetMapping("/ids")
-	public ResponseEntity<Object> findAll() {
-		return new ResponseEntity<Object>( userRepository.findAll() , HttpStatus.OK);
-	}
-	
+ 
 	
 	@GetMapping("/{username}")
 	public ResponseEntity<User> findByUserName(@PathVariable String username) {
