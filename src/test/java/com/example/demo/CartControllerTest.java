@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,8 @@ public class CartControllerTest {
 		userRequest.setUsername("Mike");
 		userRequest.setPassword("12345"); 
 	}
-	
+	@Test
+	public void contextLoads() {
+	}
 	
 }
