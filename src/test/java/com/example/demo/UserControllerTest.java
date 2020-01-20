@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -132,40 +133,45 @@ public class UserControllerTest {
      	
     private User user;
 
-	@BeforeEach
+	@BeforeEach 
 	public void init() throws URISyntaxException, IOException, Exception {
-		CreateUserRequest userRequest=new CreateUserRequest();
-		userRequest.setUsername("Mike");
-		userRequest.setPassword("1234567"); 
-		userRequest.setConfirmPassword("1234567");  
+		
+		CreateUserRequest createUser = new CreateUserRequest();
+    	createUser.setUsername("MyName");
+    	createUser.setPassword("123456789");
+    	createUser.setConfirmPassword("123456789");
       	
-    	MvcResult postResult=mvc.perform(
-                post(new URI("/api/user/create"))
-                        .content(json.write(userRequest).getJson())
+//    	MvcResult postResult=  mvc.perform(
+//    			MockMvcRequestBuilders.post( "/api/user/create")
+//                        .content(json.write(createUser).getJson())
+//                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+//                        .accept(MediaType.APPLICATION_JSON_UTF8))
+//                        .andExpect(status().isOk()).andReturn();
+    	MvcResult entityResult=  mvc.perform(
+    			MockMvcRequestBuilders.post( "/api/user/create")
+                        .content(objectMapper.writeValueAsString(createUser)) 
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                        .andExpect(status().isOk()).andReturn();
-    	
-    	objectMapper = new ObjectMapper(); 
+                        .accept(MediaType.APPLICATION_JSON_UTF8)) 
+                        .andExpect(status().isOk()).andReturn();       
+         
+    	  
         
-        user = objectMapper.readValue(postResult.getResponse().getContentAsString(), User.class);
-        user.setPassword(userRequest.getPassword());
+        user = objectMapper.readValue(entityResult.getResponse().getContentAsString(), User.class);
         
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.post("/login").content(objectMapper.writeValueAsString(userRequest)))
+//        
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.post("/login").content(objectMapper.writeValueAsString(createUser)))
         		.andExpect( status().isOk()).andReturn();
-        
-        request.addParameter("Authorization", result.getResponse().getHeader("Authorization")); 
-		 
+//        
+         request.addParameter("Authorization", entityResult.getResponse().getHeader("Authorization")); 
+//		 
 	}
-    
-	 @Test
+     
+	@Test
 	 public void findByUserNameTest() throws Exception  {
+		  
 		 
-		 init();
-		 
-		 MvcResult getResult=mvc.perform(
+		 MvcResult result=mvc.perform(
 	                get(new URI("/api/user/Mike"))
-	                       // .content(json.write(userRequest).getJson())
 	                        .contentType(MediaType.APPLICATION_JSON_UTF8)
 	                        .accept(MediaType.APPLICATION_JSON_UTF8))
 	                        .andExpect(status().isOk()).andReturn();
