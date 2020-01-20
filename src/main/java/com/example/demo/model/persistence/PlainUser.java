@@ -1,12 +1,23 @@
 package com.example.demo.model.persistence;
 
-public class PlainUser {
-	
-	private long id;
+public class PlainUser { 
  	private String username;
-	
+ 	private String password;
   
+ 	
+ 	public PlainUser( String userName, String password) {
+		this.username = userName;
+		this.password = password;
+	}
 	 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -15,13 +26,6 @@ public class PlainUser {
 		this.username = username;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 	
 	
 	
