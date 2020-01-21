@@ -1,13 +1,14 @@
 package com.example.demo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +20,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 import com.example.demo.controllers.CartController;
 import com.example.demo.model.persistence.Cart;
@@ -35,12 +40,13 @@ import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
 import com.example.demo.model.requests.ModifyCartRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jndi.toolkit.url.Uri;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
-public class CartControllerTest {
+public class ItemtControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
@@ -84,76 +90,53 @@ public class CartControllerTest {
 
 		request.addParameter("Authorization", result.getResponse().getHeader("Authorization"));
 	}
-
+	
+ 
 	@Test
-	public void addToCartTest() throws URISyntaxException, IOException, Exception {
-		init("username1");
-		ModifyCartRequest modifyCartRequest = new ModifyCartRequest();
-		modifyCartRequest.setItemId(1);
-		modifyCartRequest.setQuantity(2);
-		modifyCartRequest.setUsername("username1");
+	public void getItemsTest() throws URISyntaxException, IOException, Exception {
+		init("username1"); 
 
 		MvcResult result = mvc
-				.perform(post(new URI("/api/cart/addToCart"))
-						.header(HttpHeaders.AUTHORIZATION, request.getParameter("Authorization"))
-						.content(objectMapper.writeValueAsString(modifyCartRequest))
+				.perform(get(new URI("/api/item"))
+						.header(HttpHeaders.AUTHORIZATION, request.getParameter("Authorization")) 
 						.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
 				.andExpect(status().isOk()).andReturn();
 
-		Cart returnedCart = objectMapper.readValue(result.getResponse().getContentAsString(), Cart.class);
+		List<Item> returnedItems = objectMapper.readValue(result.getResponse().getContentAsString(), List.class);
 
-		Item queryItem = itemRepository.findById(1L).orElseThrow();
-
-		assertEquals(returnedCart.getItems().size(), modifyCartRequest.getQuantity());
-		assertEquals(returnedCart.getTotal(),
-				(queryItem.getPrice().multiply(BigDecimal.valueOf(modifyCartRequest.getQuantity()))));
+		assertEquals(returnedItems.size(), itemRepository.count());
 	}
 
+ 
 	@Test
-	public void removeFromCartTest() throws URISyntaxException, IOException, Exception {
-		init("username2");
-		ModifyCartRequest modifyCartRequest = new ModifyCartRequest();
-		modifyCartRequest.setItemId(1);
-		modifyCartRequest.setQuantity(1);
-		modifyCartRequest.setUsername("username2");
-
-		mvc.perform(post(new URI("/api/cart/addToCart"))
-				.header(HttpHeaders.AUTHORIZATION, request.getParameter("Authorization"))
-				.content(objectMapper.writeValueAsString(modifyCartRequest))
-				.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-				.andExpect(status().isOk());
-
-		modifyCartRequest.setItemId(2);
-		modifyCartRequest.setQuantity(1);
-		modifyCartRequest.setUsername("username2");
-
-		mvc.perform(post(new URI("/api/cart/addToCart"))
-				.header(HttpHeaders.AUTHORIZATION, request.getParameter("Authorization"))
-				.content(objectMapper.writeValueAsString(modifyCartRequest))
-				.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-				.andExpect(status().isOk());
-
-		ModifyCartRequest modifyCartRequest2 = new ModifyCartRequest();
-		modifyCartRequest2.setItemId(1);
-		modifyCartRequest2.setQuantity(1);
-		modifyCartRequest2.setUsername("username2");
+	public void getItemTest() throws URISyntaxException, IOException, Exception {
+		init("username2"); 
 
 		MvcResult result = mvc
-				.perform(post(new URI("/api/cart/removeFromCart"))
-						.header(HttpHeaders.AUTHORIZATION, request.getParameter("Authorization"))
-						.content(objectMapper.writeValueAsString(modifyCartRequest2))
+				.perform(get(new URI("/api/item/1"))
+						.header(HttpHeaders.AUTHORIZATION, request.getParameter("Authorization")) 
 						.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
 				.andExpect(status().isOk()).andReturn();
 
-		Cart returnedCart = objectMapper.readValue(result.getResponse().getContentAsString(), Cart.class);
+		Item returnedItem = objectMapper.readValue(result.getResponse().getContentAsString(), Item.class);
 
-		Item queryItem = itemRepository.findById(2L).orElseThrow();
+		assertEquals(returnedItem  , itemRepository.findById(1L).orElseThrow());
+	}
+	
+	@Test
+	public void getItemByNameTest() throws URISyntaxException, IOException, Exception {
+		init("username3"); 
 
-		assertEquals(returnedCart.getItems().size(), modifyCartRequest.getQuantity());
-		assertEquals(returnedCart.getTotal(),
-				(queryItem.getPrice().multiply(BigDecimal.valueOf(modifyCartRequest.getQuantity()))));
-		assertEquals(returnedCart.getItems().get(0).getId(), queryItem.getId());
+		
+		MvcResult result = mvc
+				.perform(get(new URI("/api/item/name/Square%20Widget"))
+						.header(HttpHeaders.AUTHORIZATION, request.getParameter("Authorization")) 
+						.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isOk()).andReturn();
 
+		List<Item> returnedItem = objectMapper.readValue(result.getResponse().getContentAsString(), List.class);
+
+		assertEquals(returnedItem.size(), itemRepository.findByName("Square Widget").size());
 	}
 
 }
