@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -20,33 +19,25 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.yaml.snakeyaml.util.UriEncoder;
 
 import com.example.demo.controllers.CartController;
-import com.example.demo.model.persistence.Cart;
 import com.example.demo.model.persistence.Item;
 import com.example.demo.model.persistence.PlainUser;
 import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.ItemRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
-import com.example.demo.model.requests.ModifyCartRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jndi.toolkit.url.Uri;
-
+import com.fasterxml.jackson.databind.ObjectMapper; 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
-public class ItemtControllerTest {
+public class ItemControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
@@ -61,8 +52,7 @@ public class ItemtControllerTest {
 	private UserRepository userRepository;
 
 	@InjectMocks
-	CartController cartController;
-	// @Mock UserController userController;
+	CartController cartController; 
 	//
 	@Autowired
 	ItemRepository itemRepository;
@@ -92,9 +82,10 @@ public class ItemtControllerTest {
 	}
 	
  
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getItemsTest() throws URISyntaxException, IOException, Exception {
-		init("username1"); 
+		init("username11"); 
 
 		MvcResult result = mvc
 				.perform(get(new URI("/api/item"))
@@ -110,7 +101,7 @@ public class ItemtControllerTest {
  
 	@Test
 	public void getItemTest() throws URISyntaxException, IOException, Exception {
-		init("username2"); 
+		init("username12"); 
 
 		MvcResult result = mvc
 				.perform(get(new URI("/api/item/1"))
@@ -123,9 +114,10 @@ public class ItemtControllerTest {
 		assertEquals(returnedItem  , itemRepository.findById(1L).orElseThrow());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getItemByNameTest() throws URISyntaxException, IOException, Exception {
-		init("username3"); 
+		init("username13"); 
 
 		
 		MvcResult result = mvc
