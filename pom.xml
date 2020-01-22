@@ -12,7 +12,10 @@
 	<groupId>com.example</groupId>
 	<artifactId>auth-course</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+		<packaging>jar</packaging>
 	<name>auth-course</name>
+
+	
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -107,8 +110,24 @@
 						</goals>
 					</execution>
 				</executions>
-
 			</plugin>
+			<plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <!--<dockerDirectory>src/main/docker</dockerDirectory>-->
+                    <baseImage>java:8</baseImage>
+                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
