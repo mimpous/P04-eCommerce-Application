@@ -137,6 +137,7 @@ public class OrderControllerTest {
 			.andExpect(status().isOk()).andReturn();
 		 
 		 
+		@SuppressWarnings("unchecked")
 		List<UserOrder> returnedOrders = objectMapper.readValue(result.getResponse().getContentAsString(), List.class);
 		
 		List<UserOrder> orderList= orderRepository.findByUser(user);
