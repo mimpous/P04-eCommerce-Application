@@ -1,5 +1,7 @@
 package com.example.demo.controllers;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory; 
 
@@ -37,7 +39,13 @@ public class UserController {
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
-		return ResponseEntity.of(userRepository.findById(id));
+		
+		Optional<User> user = userRepository.findById(id);
+		if ( user.isEmpty() ) {
+			log.error("User with id {} not found." , id );
+		}
+		
+		return ResponseEntity.of(user);
 	}
  
 	

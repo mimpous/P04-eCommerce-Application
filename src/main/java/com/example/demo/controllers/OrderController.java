@@ -41,7 +41,7 @@ public class OrderController {
 			log.error("An error occured to find user {}. Exception is : {}", username , e);
 		}	
 		if(user == null) {
-			log.error( "User object is null");
+			log.error( "Order failure, user {} does not exist." , username);
 			return ResponseEntity.notFound().build();
 		}
 		UserOrder order = UserOrder.createFromCart(user.getCart());

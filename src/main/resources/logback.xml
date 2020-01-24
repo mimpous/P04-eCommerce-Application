@@ -13,7 +13,7 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
      <appender name="socket" class="com.splunk.logging.TcpAppender">
-        <RemoteHost>ec2-34-244-180-145.eu-west-1.compute.amazonaws.com</RemoteHost>
+        <RemoteHost>localhost</RemoteHost>
         <Port>9000</Port>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>%thread %level: %msg%n</pattern>
